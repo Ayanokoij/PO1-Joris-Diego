@@ -22,6 +22,14 @@ class Raster {
   }
 }
 
+class PingpongBal {
+  constructor() {
+    this.x = null;
+    this.y = null;
+    this.stapGrootte = 10;
+  }
+}
+
 class Jos {
   constructor() {
     this.x = 400;
@@ -133,6 +141,7 @@ function draw() {
   eve.toon();
   alice.toon();
   bob.toon();
+  pingpongBal.Beweeg();
 
   if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob)) {
     noLoop();
