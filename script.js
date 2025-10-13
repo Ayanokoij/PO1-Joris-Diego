@@ -1,8 +1,10 @@
+var JosLevens = 3; 
+
 class Raster {
   constructor(r,k) {
     this.aantalRijen = r;
     this.aantalKolommen = k;
-    this.celGrootte = null;
+    this.celGrootte = null; 
   }
 
   berekenCelGrootte() {
@@ -21,39 +23,32 @@ class Raster {
     pop();
   }
 }
-
-class PingpongBal {
-  constructor() {
-    this.x = null;
-    this.y = null;
-    this.stapGrootte = 10;
-  }
-}
-
+  
 class Jos {
   constructor() {
-    this.x = 400;
+    this.x = 0;
     this.y = 300;
     this.animatie = [];
     this.frameNummer =  3;
     this.stapGrootte = null;
     this.gehaald = false;
   }
+  
 
   beweeg() {
-    if (keyIsDown(LEFT_ARROW)) {
+    if (keyIsDown(65)) {
       this.x -= this.stapGrootte;
       this.frameNummer = 2;
     }
-    if (keyIsDown(RIGHT_ARROW)) {
+    if (keyIsDown(68)) {
       this.x += this.stapGrootte;
       this.frameNummer = 1;
     }
-    if (keyIsDown(UP_ARROW)) {
+    if (keyIsDown(87)) {
       this.y -= this.stapGrootte;
       this.frameNummer = 4;
     }
-    if (keyIsDown(DOWN_ARROW)) {
+    if (keyIsDown(83)) {
       this.y += this.stapGrootte;
       this.frameNummer = 5;
     }
@@ -85,7 +80,7 @@ class Vijand {
     this.x = x;
     this.y = y;
     this.sprite = null;
-    this.stapGrootte = null;
+    this.stapGrote = null;
   }
 
   beweeg() {
@@ -110,8 +105,8 @@ function setup() {
   canvas.parent();
   frameRate(10);
   textFont("Verdana");
-  textSize(90);
-
+  textSize(20);
+  
   raster = new Raster(12,18);
 
   raster.berekenCelGrootte();
@@ -130,26 +125,60 @@ function setup() {
   bob = new Vijand(600,400);
   bob.stapGrootte = 1*eve.stapGrootte;
   bob.sprite = loadImage("images/sprites/Bob100px/Bob.png");  
+
+  cindy = new Vijand(900,50);
+  cindy.stapGrootte = 1*eve.stapGrootte;
+  cindy.sprite = loadImage("images/sprites/Alice100px/Alice.png");
 }
 
 function draw() {
   background(brug);
   raster.teken();
+  for (var rij = 0;rij < 900;rij += 50) {
+   B = color(0, 0, 255); 
+    fill(B);
+    for (var kolom = 0;kolom < 900;kolom += 50) {
+      rect(kolom,rij,50,50);
+    }
+  }
   eve.beweeg();
   alice.beweeg();
   bob.beweeg();
   eve.toon();
   alice.toon();
   bob.toon();
-  pingpongBal.Beweeg();
+  cindy.toon();
+  cindy.beweeg();
+  text("Levens: " + JosLevens, 10, 20)
+  
+
 
   if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob)) {
-    noLoop();
+    if (JosLevens > 1) {  
+      JosLevens--;
+      eve.x = 0;
+      eve.y = 300;
+      alice.x = 700;
+      alice.y = 200;
+      bob.x = 600;
+      bob.y = 400;
+      cindy.x = 900;
+      cindy.y = 50;
+    }
+    else {
+      background('red')
+      fill('white');
+      textSize(90);
+      text("Je hebt verloren..", 30, 300)
+      noLoop();
+    }
   }
+  
 
   if (eve.gehaald) {
     background('green');
     fill('white');
+    textSize(90);
     text("Je hebt gewonnen!",30,300);
     noLoop();
   }
