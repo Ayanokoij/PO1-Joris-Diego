@@ -78,6 +78,14 @@ class Jos {
       return false;
     }
   }
+  wordtGeraakt(raket) {
+    if (this.x == raket.x && this.y == raket.y) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
 
   toon() {
     image(this.animatie[this.frameNummer],this.x,this.y,raster.celGrootte,raster.celGrootte);
@@ -91,7 +99,7 @@ class raket {
     this.y = y;
     this.vy = vy;
     this.vx = vx;
-    this.kleur = 'deeppink';
+    this.kleur = 'black';
   }
 
   beweeg() {
@@ -105,43 +113,37 @@ class raket {
     }
   }
 
-  wordtGeraakt(k) {
-    if (dist(this.x,this.y,k.x,k.y) <= (k.diameter + this.diameter) / 2) {
-      k.y = -100;
-      this.levens++;
-    }
-  }
-
   teken() {
     push();
     fill(this.kleur);
     noStroke();
     ellipse(this.x,this.y,this.diameter);
-    fill('white');
-    text(this.levens,this.x,this.y);
     pop();
   }
 }
 
 class pingpong {
-  constructor() {
-    this.diameter = 20;
-    this.straal = this.diameter/2;
-    this.x = random(2*this.straal,canvas.width - 2*this.straal);
-    this.y = this.straal;
-    this.basissnelheid = 5;
-    this.snelheidX = random(1,this.basissnelheid);
-    this.snelheidY = random(1,this.basissnelheid);
-    this.kleur = 0;
-  }  
+  diameter = 40;
+  straal = null;
+  x = null;
+  y = null;
+  snelheidX = 32;
+  snelheidY = 20;
 
   beweeg() {
-    this.x+=this.snelheidX;
-    this.y+=this.snelheidY;
+    this.x += this.snelheidX;
+    this.y += this.snelheidY;
+
+    if (this.x < this.straal || this.x > canvas.width - this.straal) {
+      this.snelheidX *= -1;
+    }
+    if (this.y < this.straal || this.y > canvas.height - this.straal) {
+      this.snelheidY *= -1;
+    }
   }
 
   teken() {
-    fill(this.kleur);
+    fill('white');
     ellipse(this.x,this.y,this.diameter);
   }
 }
@@ -202,10 +204,10 @@ function setup() {
   cindy.stapGrootte = 1*eve.stapGrootte;
   cindy.sprite = loadImage("images/sprites/Alice100px/Alice.png");
 
-  raket1 = new raket(250, 200, 10, 0);
-  raket2 = new raket(500, 200, 10, 0)
-  raket3 = new raket(100, 200, 10, 0)
-  Tennisbal = new Tennisbal()
+  raket1 = new raket(275, 200, 25,0);
+  raket2 = new raket(525, 200, 25,0);
+  raket3 = new raket(125, 200, 25,0);
+  pingpong1 = new pingpong();
   
 }
 
@@ -227,15 +229,16 @@ function draw() {
   raket2.teken();
   raket3.beweeg();
   raket3.teken();
-  pingpong.beweeg();
-  pingpong.teken();
+  pingpong1.beweeg();
+  pingpong1.teken();
   text("Levens: " + JosLevens, 10, 20)
 
 
 
-  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob)) {
+  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.wordtGeraakt(cindy) || eve.wordtGeraakt(raket1) || eve.wordtGeraakt(raket2) || eve.wordtGeraakt(raket3))
+  {
     if (JosLevens > 1) {  
-      JosLevens--;
+      JosLevens --;
       eve.x = 0;
       eve.y = 300;
       alice.x = 700;
