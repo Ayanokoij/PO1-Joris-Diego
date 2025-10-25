@@ -21,6 +21,10 @@ class Raster {
         if (rij == 0 || rij == 11 || kolom == 0 || kolom == 17) {
           fill('blue');
           rect(kolom*this.celGrootte,rij*this.celGrootte,this.celGrootte,this.celGrootte);
+          if (dist(kolom*this.celGrootte,rij*this.celGrootte, mouseX, mouseY) < this.celGrootte) {
+            fill('red')
+            rect(kolom*this.celGrootte,rij*this.celGrootte,this.celGrootte,this.celGrootte);
+          }
 
         }
         else {
@@ -37,6 +41,8 @@ class Jos {
   constructor() {
     this.x = 0;
     this.y = 300;
+    this.levens = 3;
+    this.diameter = 50
     this.animatie = [];
     this.frameNummer =  3;
     this.stapGrootte = null;
@@ -79,8 +85,20 @@ class Jos {
     }
   }
   wordtGeraakt(raket) {
-    if (this.x == raket.x && this.y == raket.y) {
+    if (dist(this.x,this.y,raket.x,raket.y) <= (raket.diameter + this.diameter) / 2) {
+      raket.y = -100;
       return true;
+    }
+    else {
+      return false;
+    }
+  }
+  wordtGeraakt(pingpong) {
+    if (this.x == pingpong.x  && this.y == pingpong.y) {
+      JosLevens +=1;
+      pingpong = null;
+      return true;
+      
     }
     else {
       return false;
@@ -88,30 +106,28 @@ class Jos {
   }
 
   toon() {
+    
     image(this.animatie[this.frameNummer],this.x,this.y,raster.celGrootte,raster.celGrootte);
   }
 }  
 
 class raket {
-  constructor(x,y,vy,vx) {
+  constructor(x,y,l,vy) {
     this.diameter = 50;
     this.x = x;
     this.y = y;
+    this.l = l;
     this.vy = vy;
-    this.vx = vx;
     this.kleur = 'black';
   }
 
   beweeg() {
-    this.x += this.vx;
-    if (this.x > canvas.width - this.diameter / 2 || this.x < canvas.width / 3 + this.diameter / 2) {
-      this.vx *= -1;
-    }
+
     this.y += this.vy;
     if (this.y > canvas.height - this.diameter / 2 || this.y < this.diameter / 2) {
       this.vy *= -1;
     }
-  }
+    }
 
   teken() {
     push();
@@ -153,7 +169,7 @@ class Vijand {
     this.x = x;
     this.y = y;
     this.sprite = null;
-    this.stapGrote = null;
+    this.stapGrootte = null;
   }
 
   beweeg() {
@@ -167,6 +183,49 @@ class Vijand {
   toon() {
     image(this.sprite,this.x,this.y,raster.celGrootte,raster.celGrootte);
   }
+}
+
+function RaketwordGeraakt() {
+  if (dis(eve.x,eve.y,raket.x,raket.y) < (raket.diameter + eve.diameter) / 2) {
+    return true;
+  }
+  else  {
+    return false;
+  }
+}
+
+function WinVerliesChecker() {
+
+
+  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.wordtGeraakt(cindy) || eve.wordtGeraakt(raket1) || eve.wordtGeraakt(raket2) || eve.wordtGeraakt(raket3) || RaketwordGeraakt()) {
+      if (JosLevens > 1) {  
+        JosLevens --;
+        eve.x = 0;
+        eve.y = 300;
+        alice.x = 700;
+        alice.y = 200;
+        bob.x = 600;
+        bob.y = 400;
+        cindy.x = 900;
+        cindy.y = 50;
+      }
+      else {
+        background('red')
+        fill('white');
+        textSize(90);
+        text("Je hebt verloren..", 30, 300)
+        noLoop();
+      }
+    }
+
+
+    if (eve.gehaald) {
+      background('green');
+      fill('white');
+      textSize(90);
+      text("Je hebt gewonnen!",30,300);
+      noLoop();
+    }
 }
 
 function preload() {
@@ -204,9 +263,9 @@ function setup() {
   cindy.stapGrootte = 1*eve.stapGrootte;
   cindy.sprite = loadImage("images/sprites/Alice100px/Alice.png");
 
-  raket1 = new raket(275, 200, 25,0);
-  raket2 = new raket(525, 200, 25,0);
-  raket3 = new raket(125, 200, 25,0);
+  raket1 = new raket(random(50,850), random(50,550), 25, 12);
+  raket2 = new raket(random(50,850), random(50,550), 25, 20);
+  raket3 = new raket(random(50,850), random(50,550), 25, 12);
   pingpong1 = new pingpong();
   
 }
@@ -232,37 +291,9 @@ function draw() {
   pingpong1.beweeg();
   pingpong1.teken();
   text("Levens: " + JosLevens, 10, 20)
+  WinVerliesChecker();
+  RaketwordGeraakt();
 
 
-
-  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.wordtGeraakt(cindy) || eve.wordtGeraakt(raket1) || eve.wordtGeraakt(raket2) || eve.wordtGeraakt(raket3))
-  {
-    if (JosLevens > 1) {  
-      JosLevens --;
-      eve.x = 0;
-      eve.y = 300;
-      alice.x = 700;
-      alice.y = 200;
-      bob.x = 600;
-      bob.y = 400;
-      cindy.x = 900;
-      cindy.y = 50;
-    }
-    else {
-      background('red')
-      fill('white');
-      textSize(90);
-      text("Je hebt verloren..", 30, 300)
-      noLoop();
-    }
-  }
-
-
-  if (eve.gehaald) {
-    background('green');
-    fill('white');
-    textSize(90);
-    text("Je hebt gewonnen!",30,300);
-    noLoop();
-  }
+  
 } 
