@@ -94,6 +94,15 @@ class Jos {
 
   }
 
+  wordtGeraakt(pingpong) {
+    if (dist(pingpong.x, pingpong.y, this.x, this.y) < 50) {
+      return true;
+    }
+    else {
+      return false;
+    }
+
+  }
   toon() {
     image(this.animatie[this.frameNummer],this.x,this.y,raster.celGrootte,raster.celGrootte);
   }
@@ -241,6 +250,14 @@ function WinOfVerlies() {
         noLoop();
       }
     }
+}
+  function ExtraLeven() {
+    if ( eve.wordtGeraakt(pingpong1))
+      {
+        JosLevens ++;
+        pingpong1.x = 1000;
+        }
+  }
 
 
     if (eve.gehaald) {
@@ -250,9 +267,6 @@ function WinOfVerlies() {
       text("Je hebt gewonnen!",30,300);
       noLoop();
     }
-
-    
-}
 
 function draw() {
   background(brug);
@@ -279,6 +293,7 @@ function draw() {
   
   text("Levens: " + JosLevens, 10, 20)
   WinOfVerlies();
+  ExtraLeven();
 
 
   
