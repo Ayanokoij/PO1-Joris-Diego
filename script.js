@@ -197,7 +197,7 @@ function RaketwordGeraakt() {
 function WinVerliesChecker() {
 
 
-  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.wordtGeraakt(cindy) || eve.wordtGeraakt(raket1) || eve.wordtGeraakt(raket2) || eve.wordtGeraakt(raket3) || RaketwordGeraakt()) {
+  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.wordtGeraakt(cindy) || eve.wordtGeraakt(raket1)|| eve.wordtGeraakt(raket2) || eve.wordtGeraakt(raket3) || RaketwordGeraakt()== true) {
       if (JosLevens > 1) {  
         JosLevens --;
         eve.x = 0;
