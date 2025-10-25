@@ -95,7 +95,7 @@ class Jos {
   }
 
   wordtGeraakt(pingpong) {
-    if (dist(pingpong.x, pingpong.y, this.x, this.y) < 50) {
+    if (dist(pingpong.x, pingpong.y, this.x, this.y) < 40) {
       return true;
     }
     else {
@@ -109,20 +109,15 @@ class Jos {
 }  
 
 class raket {
-  constructor(x,y,vy,vx) {
+  constructor(x,y,vy) {
     this.diameter = 50;
     this.x = x;
     this.y = y;
     this.vy = vy;
-    this.vx = vx;
     this.kleur = 'black';
   }
 
   beweeg() {
-    this.x += this.vx;
-    if (this.x > canvas.width - this.diameter / 2 || this.x < canvas.width / 3 + this.diameter / 2) {
-      this.vx *= -1;
-    }
     this.y += this.vy;
     if (this.y > canvas.height - this.diameter / 2 || this.y < this.diameter / 2) {
       this.vy *= -1;
@@ -221,9 +216,9 @@ function setup() {
   cindy.stapGrootte = 1*eve.stapGrootte;
   cindy.sprite = loadImage("images/sprites/Alice100px/Alice.png");
 
-  raket1 = new raket(325, 200, 25,0);
-  raket2 = new raket(525, 200, 25,0);
-  raket3 = new raket(125, 200, 25,0);
+  raket1 = new raket(25 + int(random(1,16)) * 50,25 + int(random(1,8)) * 50,random(5,25));
+  raket2 = new raket(25 + int(random(1,16)) * 50, 25 + int(random(1,8)) * 50, random(5,25));
+  raket3 = new raket(25 + int(random(1,16)) * 50, 25 + int(random(1,8)) * 50, random(5,25));
   pingpong1 = new pingpong();
   
 }
@@ -294,8 +289,4 @@ function draw() {
   text("Levens: " + JosLevens, 10, 20)
   WinOfVerlies();
   ExtraLeven();
-
-
-  
-
 } 
