@@ -1,6 +1,7 @@
+// Aantal levens Speler
 var JosLevens = 3;
 
-
+// Het maken van het Raster
 class Raster {
   constructor(r,k) {
     this.aantalRijen = r;
@@ -16,6 +17,9 @@ class Raster {
     push();
     noFill();
     stroke('grey');
+
+    // Ervoor zorgen dat er een blauwe rand is en als je het raakt dat het rood wordt. 
+    
     for (var rij = 0;rij < this.aantalRijen;rij++) {
       for (var kolom = 0;kolom < this.aantalKolommen;kolom++) {
         if (rij == 0 || rij == 11 || kolom == 0 || kolom == 17) {
@@ -36,7 +40,9 @@ class Raster {
   }
 }
 
+// EINDE raster
 
+// Speler
 class Jos {
   constructor() {
     this.x = 0;
@@ -75,7 +81,7 @@ class Jos {
   }
 
 
-
+// Als hij wordt geraakt door een ander beweegend object
   wordtGeraakt(vijand) {
     if (this.x == vijand.x && this.y == vijand.y) {
       return true;
@@ -107,7 +113,9 @@ class Jos {
     image(this.animatie[this.frameNummer],this.x,this.y,raster.celGrootte,raster.celGrootte);
   }
 }  
+// EINDE speler
 
+// Raketten aanmaken
 class raket {
   constructor(x,y,vy) {
     this.diameter = 50;
@@ -122,8 +130,13 @@ class raket {
     if (this.y > canvas.height - this.diameter / 2 || this.y < this.diameter / 2) {
       this.vy *= -1;
     }
+    if (this.y < 25){
+      this.vy *= 1.25;
+    }
+    if(this.y > canvas.height - this.diameter / 2){
+        this.vy /= 1.25;
+    }
   }
-
   teken() {
     push();
     fill(this.kleur);
@@ -133,12 +146,14 @@ class raket {
   }
 }
 
-class pingpong {
+// EINDE raketten
 
+// pingpong aanmaken
+class pingpong {
   diameter = 40;
   straal = null;
-  x = null;
-  y = null;
+  x = 25 + int(random(1,16)) * 50;
+  y = 25 + int(random(1,8)) * 50;
   snelheidX = 32;
   snelheidY = 20;
 
@@ -160,6 +175,9 @@ class pingpong {
   }
 }
 
+// EINDE pingpong
+
+// Vijanden aanmaken
 class Vijand {
   constructor(x,y) {
     this.x = x;
@@ -181,6 +199,9 @@ class Vijand {
   }
 }
 
+// EINDE vijanden
+
+// Begin van het spel
 function preload() {
   brug = loadImage("images/backgrounds/dame_op_brug_1800.jpg");
 }
@@ -196,7 +217,7 @@ function setup() {
 
   raster.berekenCelGrootte();
 
-
+// objecten aanmaken
   eve = new Jos();
   eve.stapGrootte = 1*raster.celGrootte;
   for (var b = 0;b < 6;b++) {
@@ -216,13 +237,16 @@ function setup() {
   cindy.stapGrootte = 1*eve.stapGrootte;
   cindy.sprite = loadImage("images/sprites/Alice100px/Alice.png");
 
-  raket1 = new raket(25 + int(random(1,16)) * 50,25 + int(random(1,8)) * 50,random(5,25));
-  raket2 = new raket(25 + int(random(1,16)) * 50, 25 + int(random(1,8)) * 50, random(5,25));
-  raket3 = new raket(25 + int(random(1,16)) * 50, 25 + int(random(1,8)) * 50, random(5,25));
-  pingpong1 = new pingpong();
+  raket1 = new raket(25 + int(random(1,16)) * 50,25 + int(random(1,8)) * 50,random(10,18));
+  raket2 = new raket(25 + int(random(1,16)) * 50, 25 + int(random(1,8)) * 50, random(10,18));
+  raket3 = new raket(25 + int(random(1,16)) * 50, 25 + int(random(1,8)) * 50, random(10,18));
   
+  pingpong1 = new pingpong(25 + int(random(1,16)) * 50, 25 + int(random(1,8)) * 50);
 }
 
+// EINDE  objcten aanmaken
+
+// Speler raakt een object + einde/doorloop spel/finish game.
 function WinOfVerlies() {
   if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.wordtGeraakt(cindy) || eve.wordtGeraakt(raket1) || eve.wordtGeraakt(raket2) || eve.wordtGeraakt(raket3))
     {
@@ -245,6 +269,13 @@ function WinOfVerlies() {
         noLoop();
       }
     }
+  if (eve.gehaald) {
+    background('green');
+    fill('white');
+    textSize(90);
+    text("Je hebt gewonnen!",30,300);
+    noLoop();
+  }
 }
   function ExtraLeven() {
     if ( eve.wordtGeraakt(pingpong1))
@@ -254,15 +285,9 @@ function WinOfVerlies() {
         }
   }
 
+// EINDE Speler raakt een object + einde/doorloop spel/finish game.
 
-    if (eve.gehaald) {
-      background('green');
-      fill('white');
-      textSize(90);
-      text("Je hebt gewonnen!",30,300);
-      noLoop();
-    }
-
+// alles tekenen
 function draw() {
   background(brug);
   raster.teken();
@@ -289,4 +314,6 @@ function draw() {
   text("Levens: " + JosLevens, 10, 20)
   WinOfVerlies();
   ExtraLeven();
+
+  // EINDE alles tekenen
 } 
