@@ -1,5 +1,6 @@
 // Aantal levens Speler
 var JosLevens = 3;
+var fillRed = false
 
 // Het maken van het Raster
 class Raster {
@@ -23,17 +24,34 @@ class Raster {
     for (var rij = 0;rij < this.aantalRijen;rij++) {
       for (var kolom = 0;kolom < this.aantalKolommen;kolom++) {
         if (rij == 0 || rij == 11 || kolom == 0 || kolom == 17) {
-          fill('blue');
-          rect(kolom*this.celGrootte,rij*this.celGrootte,this.celGrootte,this.celGrootte);
-          if (dist(kolom*this.celGrootte,rij*this.celGrootte, mouseX, mouseY) < this.celGrootte) {
-            fill('red')
+          if (fillRed) {
+            fill('red');
             rect(kolom*this.celGrootte,rij*this.celGrootte,this.celGrootte,this.celGrootte);
           }
-        }
+          else {
+          fill('blue');
+          rect(kolom*this.celGrootte,rij*this.celGrootte,this.celGrootte,this.celGrootte);
+          }
+          
+          if (dist(kolom*this.celGrootte,rij*this.celGrootte, mouseX, mouseY) < this.celGrootte) {
+             fillRed = true
+              
+            }
+          else {
+            fillRed = false
+          }
+          }
         else {
-          noFill();
-        rect(kolom*this.celGrootte,rij*this.celGrootte,this.celGrootte,this.celGrootte);
+          if (fillRed==true) {
+            fill('red');
+            rect(kolom*this.celGrootte,rij*this.celGrootte,this.celGrootte,this.celGrootte);
+          }
+          else {
+          nofill();
+          rect(kolom*this.celGrootte,rij*this.celGrootte,this.celGrootte,this.celGrootte);
+          }
         }
+
       }
     }
     pop();
