@@ -2,7 +2,7 @@
 var JosLevens = 3;
 
 // variabelen voor piramide
-var aantalLagen = 12;
+var aantalLagen = 17;
 var breedte;
 var hoogte;
 
@@ -26,21 +26,13 @@ class Raster {
     // Ervoor zorgen dat er een blauwe rand is en als je het raakt dat het rood wordt. 
     for (var rij = 0;rij < this.aantalRijen;rij++) {
           for (var kolom = 0;kolom < this.aantalKolommen;kolom++) {
-            
-            if (rij == 0 || rij == 11 || kolom == 0 || kolom == 17) {
+
+              if (rij == 0 || rij == this.aantalRijen-1 || kolom == 0 || kolom == this.aantalKolommen-1) {
 
               // als de cel een deel van de rand is wordt deze blauw.
-              
+
               fill('blue');
               rect(kolom*this.celGrootte,rij*this.celGrootte,this.celGrootte,this.celGrootte);
-
-              // als de muis over de cel gaat wordt deze rood.
-              if (dist(kolom*this.celGrootte,rij*this.celGrootte, mouseX, mouseY) < this.celGrootte) {
-                
-                fill('red')
-                rect(kolom*this.celGrootte,rij*this.celGrootte,this.celGrootte,this.celGrootte);
-              }
-              // als een cel niet deel uitmaakt van de rand krijgt deze geen vulling/kleur.
             }
             else {
               noFill();
@@ -51,7 +43,6 @@ class Raster {
         pop();
       }
     }
-
 
 // EINDE raster
 
@@ -105,7 +96,7 @@ class Jos {
   }
 // checkt of jos een raket raakt
   wordtGeraakt(raket) {
-    if (dist(raket.x, raket.y, this.x, this.y) < 50) {
+    if (dist(raket.x, raket.y, this.x, this.y) < raster.celGrootte/2) {
       return true;
     }
     else {
@@ -115,13 +106,20 @@ class Jos {
   }
 // Checkt of jost de pingpongbal raakt
   wordtGeraakt(pingpong) {
-    if (dist(pingpong.x, pingpong.y, this.x, this.y) < 40) {
+    if (dist(pingpong.x, pingpong.y, this.x, this.y) < raster.celGrootte/4) {
       return true;
     }
     else {
       return false;
     }
-
+  }
+    wordtGeraakt(bom) {
+      if (dist(bom.x, bom.y, this.x, this.y) < 40) {
+        return true;
+      }
+      else {
+        return false;
+      }
   }
   toon() {
     image(this.animatie[this.frameNummer],this.x,this.y,raster.celGrootte,raster.celGrootte);
@@ -131,12 +129,13 @@ class Jos {
 
 // Raketten aanmaken
 class raket {
-  constructor(x,y,vy) {
-    this.diameter = 50;
+  constructor(x,y,vy,afbeelding) {
+    this.diameter = raster.celGrootte;
     this.x = x;
     this.y = y;
     this.vy = vy;
     this.kleur = 'black';
+    this.sprite = afbeelding;
   }
 
   beweeg() {
@@ -170,7 +169,7 @@ class raket {
 
 // pingpong aanmaken
 class pingpong {
-  diameter = 40;
+  diameter = raster.celGrootte/2;
   straal = null;
   x = 25 + int(random(1,16)) * 50;
   y = 25 + int(random(1,8)) * 50;
@@ -197,6 +196,20 @@ class pingpong {
 
 // EINDE pingpong
 
+// Bom aanmaken
+class Bom {
+  constructor(x,y,l, sprite) {
+    this.x = x;
+    this.y = y;
+    this.l = l;
+    this.sprite = sprite;
+  }
+  toon() {
+    image(this.sprite,this.x,this.y,this.l,this.l);
+   }
+   
+  }
+  
 // Vijanden aanmaken
 class Vijand {
   constructor(x,y) {
@@ -224,6 +237,7 @@ class Vijand {
 // Begin van het spel
 function preload() {
   brug = loadImage("images/backgrounds/dame_op_brug_1800.jpg");
+  //Bomplaatje = loadImage("images/sprites/Bom100px/Bom.png");
 }
 
 function setup() {
@@ -237,10 +251,6 @@ function setup() {
   raster = new Raster(12,18);
 // functie aanroepen
   raster.berekenCelGrootte();
-
-  // bepalen hoe groot de piramide is per vakje
-  breedte = 50;
-  hoogte = 25;
   
 // Speler aanmaken
   eve = new Jos();
@@ -262,11 +272,14 @@ function setup() {
   cindy.stapGrootte = 1*eve.stapGrootte;
   cindy.sprite = loadImage("images/sprites/Alice100px/Alice.png");
 
-  raket1 = new raket(25 + int(random(1,16)) * 50,25 + int(random(1,8)) * 50,random(10,18));
-  raket2 = new raket(25 + int(random(1,16)) * 50, 25 + int(random(1,8)) * 50, random(10,18));
-  raket3 = new raket(25 + int(random(1,16)) * 50, 25 + int(random(1,8)) * 50, random(10,18));
+  raket1 = new raket(raster.celGrootte/2 + int(random(1,6)) * raster.celGrootte,raster.celGrootte/2 + int(random(1,8)) * raster.celGrootte,random(10,18));
   
-  pingpong1 = new pingpong(25 + int(random(1,16)) * 50, 25 + int(random(1,8)) * 50);
+  raket2 = new raket(raster.celGrootte/2 + int(random(6,11)) * raster.celGrootte, raster.celGrootte/2 + int(random(1,8)) * raster.celGrootte, random(10,18));
+  
+  raket3 = new raket(raster.celGrootte/2 + int(random(11,16)) * raster.celGrootte, raster.celGrootte/2 + int(random(1,8)) * raster.celGrootte, random(10,18));
+  
+  pingpong1 = new pingpong(raster.celGrootte/2 + int(random(1,16)) * raster.celGrootte, raster.celGrootte/2 + int(random(1,8)) * raster.celGrootte);
+  //bom1 = new Bom(25 + int(random(1,16)) * 50, 25 + int(random(1,8)) * 50, 50, Bomplaatje);
 }
 
 // EINDE  objcten aanmaken
@@ -274,27 +287,31 @@ function setup() {
 // Speler raakt een object + einde/doorloop spel/finish game.
 
 // tekenen van de omgekeerdepiramide
-/*
 function tekenPiramide(n) {
   push();
+  // bepalen hoe groot de piramide is per vakje
+  var breedte = raster.celGrootte;
+  var  hoogte = raster.celGrootte/2;
+  
   fill('red');
   if (n>0) {
+    // bepalen waar de piramide begint te tekenen
+    var x = 425 - n*breedte/2;
+     var y = 50 + (aantalLagen - n)*hoogte;
+    // tekenen van de piramide
     for (var nr = 1;nr < n;nr++) {
-      rect(nr*breedte,0,breedte,hoogte);
+      rect(x + nr*breedte,y,breedte, hoogte);
     }
-    
-     translate(breedte/2,hoogte);
     n--;
     tekenPiramide(n);
     pop();
     
   }
 }
-*/
-function WinOfVerlies() {
+function WinOfVerlies(a, b, c, r1, r2, r3) {
 
   // checkt of deze gebeurtenissen plaatsvinden
-  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.wordtGeraakt(cindy) || eve.wordtGeraakt(raket1) || eve.wordtGeraakt(raket2) || eve.wordtGeraakt(raket3))
+  if (eve.wordtGeraakt(a) || eve.wordtGeraakt(b) || eve.wordtGeraakt(c) || eve.wordtGeraakt(r1) || eve.wordtGeraakt(r2) || eve.wordtGeraakt(r3))
     {
       //  als Jos nog levens heeft, dan gaat hij terug naar de startpositie en verliest 1 leven
       if (JosLevens > 1) {  
@@ -339,11 +356,14 @@ function WinOfVerlies() {
 
 // alles tekenen
 function draw() {
-  background(brug);
-  /*
-  tekenPiramide(aantalLagen);
-  */
+  if (floor(mouseX / 50) == 0 || floor(mouseX / 50) == 17 || floor(mouseY / 50) == 0 || floor(mouseY / raster.celGrootte) == 11) {
+    background('red');
+  }
+  else {
+    background(brug);
+  }  
   raster.teken();
+  tekenPiramide(aantalLagen);
   eve.beweeg();
   alice.beweeg();
   bob.beweeg();
@@ -358,6 +378,7 @@ function draw() {
   raket2.teken();
   raket3.beweeg();
   raket3.teken();
+  //bom1.toon();
 
 
   pingpong1.beweeg();
@@ -368,7 +389,7 @@ function draw() {
   text("Levens: " + JosLevens, 10, 20)
 
   // functies aanroepen
-  WinOfVerlies();
+  WinOfVerlies(alice, bob, cindy, raket1, raket2, raket3);
   ExtraLeven();
 
   // EINDE alles tekenen
